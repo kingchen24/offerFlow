@@ -31,7 +31,7 @@ export async function POST(request) {
 
     return response
   } catch (error) {
-    console.error('Login error:', error)
+    console.error('Login error:', error.message, error.stack)
     return NextResponse.json({ error: '登录失败，请稍后重试' }, { status: 500 })
   }
 }

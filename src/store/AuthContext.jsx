@@ -54,6 +54,11 @@ export function AuthProvider({ children }) {
       const data = await res.json()
       throw new Error(data.error || '退出失败')
     }
+    // Clear client-side caches so the next user starts fresh
+    localStorage.removeItem('offerFlow_jobs')
+    localStorage.removeItem('offerFlow_resumes')
+    localStorage.removeItem('offerFlow_tasks')
+    localStorage.removeItem('offerFlow_reviews')
     setUser(null)
   }, [])
 

@@ -37,6 +37,11 @@ export async function POST() {
   const user = await getAuthUser()
   if (!user) return NextResponse.json({ error: '未登录' }, { status: 401 })
 
+  // Only seed for the test account 'user'; other accounts start empty
+  if (user.username !== 'user') {
+    return NextResponse.json({ message: '非测试账户，跳过种子数据初始化' })
+  }
+
   const existingCount = await prisma.job.count({ where: { userId: user.id } })
   if (existingCount > 0) {
     return NextResponse.json({ message: '数据已存在，跳过初始化' })

@@ -3,8 +3,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  directUrl    = env("DIRECT_URL")
+  relationMode = "prisma"
 }
 
 model User {
@@ -50,6 +52,8 @@ model Job {
   user   User    @relation(fields: [userId], references: [id])
   tasks  Task[]
   reviews Review[]
+
+  @@index([userId])
 }
 
 model Resume {
@@ -72,6 +76,8 @@ model Resume {
 
   user User @relation(fields: [userId], references: [id])
   jobs Job[]
+
+  @@index([userId])
 }
 
 model Task {
@@ -89,6 +95,8 @@ model Task {
 
   user User @relation(fields: [userId], references: [id])
   job  Job?  @relation(fields: [jobId], references: [id])
+
+  @@index([userId])
 }
 
 model Review {
@@ -117,4 +125,7 @@ model Review {
 
   user User @relation(fields: [userId], references: [id])
   job  Job?  @relation(fields: [jobId], references: [id])
+
+  @@index([userId])
+  @@index([jobId])
 }

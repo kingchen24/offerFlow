@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 import { generateMockData, defaultSettings } from './mockData'
 import { deleteReviewAttachmentsByReviewId } from '../utils/reviewAttachmentStore'
 import Toast from '../components/Toast'
+import { useAuth } from './AuthContext'
 
 const AppContext = createContext(null)
 
@@ -142,6 +143,8 @@ function saveToStorage(key, data) {
 }
 
 export function AppProvider({ children }) {
+  const { user, loading: authLoading } = useAuth()
+
   const [jobs, setJobsRaw] = useState([])
   const [resumes, setResumesRaw] = useState([])
   const [tasks, setTasksRaw] = useState([])
@@ -161,10 +164,11 @@ export function AppProvider({ children }) {
     }, 3000)
   }, [])
 
-  // ---- Data loading on mount ----
+  // ---- Data loading: re-fetch when auth state changes (login/logout) ----
   useEffect(() => {
+    if (authLoading) return
     loadAllData()
-  }, [])
+  }, [user?.id, authLoading])
 
   async function loadAllData() {
     setDataLoading(true)
@@ -176,17 +180,6 @@ export function AppProvider({ children }) {
         apiFetch('/api/reviews'),
       ])
 
-      // Seed mock data for new users
-      if (!j.length && !r.length && !t.length && !rv.length) {
-        await apiFetch('/api/seed', { method: 'POST' })
-        ;[j, r, t, rv] = await Promise.all([
-          apiFetch('/api/jobs'),
-          apiFetch('/api/resumes'),
-          apiFetch('/api/tasks'),
-          apiFetch('/api/reviews'),
-        ])
-      }
-
       setJobsRaw(migrateJobs(j))
       setResumesRaw(r)
       setTasksRaw(t)
@@ -197,13 +190,22 @@ export function AppProvider({ children }) {
       saveToStorage('offerFlow_tasks', t)
       saveToStorage('offerFlow_reviews', rv)
     } catch (err) {
-      console.error('[AppContext] API load failed, falling back to localStorage', err)
-      addToast('数据加载失败，使用本地缓存', 'error')
-      const mock = generateMockData()
-      setJobsRaw(migrateJobs(loadFromStorage('offerFlow_jobs', mock.jobs)))
-      setResumesRaw(loadFromStorage('offerFlow_resumes', mock.resumes))
-      setTasksRaw(loadFromStorage('offerFlow_tasks', mock.tasks))
-      setReviewsRaw(loadFromStorage('offerFlow_reviews', mock.reviews))
+      // If unauthorized, just show empty data instead of falling
+      // back to a potentially stale localStorage from another user.
+      if (err.message === 'Unauthorized') {
+        setJobsRaw([])
+        setResumesRaw([])
+        setTasksRaw([])
+        setReviewsRaw([])
+      } else {
+        console.error('[AppContext] API load failed, falling back to localStorage', err)
+        addToast('数据加载失败，使用本地缓存', 'error')
+        const mock = generateMockData()
+        setJobsRaw(migrateJobs(loadFromStorage('offerFlow_jobs', mock.jobs)))
+        setResumesRaw(loadFromStorage('offerFlow_resumes', mock.resumes))
+        setTasksRaw(loadFromStorage('offerFlow_tasks', mock.tasks))
+        setReviewsRaw(loadFromStorage('offerFlow_reviews', mock.reviews))
+      }
     } finally {
       setDataLoading(false)
     }
