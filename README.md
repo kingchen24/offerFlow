@@ -43,6 +43,60 @@
 
 ---
 
+## 功能截图
+
+### 仪表盘 (Dashboard)
+> 状态饼图 · 投递趋势 · 渠道分布 · 待办概览
+
+![Dashboard](screenshots/01-dashboard.png)
+
+### 岗位库 (Positions)
+> 表格管理 · 多维度筛选 · 求职链接管理 · 批量操作
+
+![Positions](screenshots/02-positions.png)
+
+### 投递看板 (Kanban)
+> 10 列全流程 · 拖拽流转 · 卡片式展示
+
+![Kanban](screenshots/03-kanban.png)
+
+### 面试复盘 (Interview)
+> 8 维度评分 · AI 智能分析 · 逐题拆解 · 趋势报告
+
+![Interview](screenshots/04-interview.png)
+
+### 数据洞察 (Insights)
+> 投递漏斗 · 评分趋势 · 薄弱项 · 拒绝分析
+
+![Insights](screenshots/05-insights.png)
+
+### 日程待办 (Schedule)
+> 按类型分组 · 优先级标记 · 关联岗位
+
+![Schedule](screenshots/06-schedule.png)
+
+### 简历管理 (Resumes)
+> 多版本管理 · 本地上传 · 默认标记
+
+![Resumes](screenshots/07-resume.png)
+
+### 新增岗位弹窗
+> 多平台求职链接 · 薪资/城市/优先级配置
+
+![Add Job](screenshots/08-add-job-modal.png)
+
+### 暗色模式
+> 仪表盘暗色 | 投递看板暗色
+
+<table>
+  <tr>
+    <td><img src="screenshots/09-dashboard-dark.png" alt="Dashboard Dark"/></td>
+    <td><img src="screenshots/10-kanban-dark.png" alt="Kanban Dark"/></td>
+  </tr>
+</table>
+
+---
+
 ## 快速开始
 
 ### 前置条件
