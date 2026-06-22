@@ -797,3 +797,209 @@ body {
 .ai-dots span:nth-child(3) {
   animation-delay: 0.4s;
 }
+
+/* ===== Shimmer loading effect ===== */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 75%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* ===== Pulse ring for status indicators ===== */
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+.pulse-ring {
+  position: relative;
+}
+.pulse-ring::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  animation: pulse-ring 1.5s ease-out infinite;
+  opacity: 0;
+}
+
+/* ===== Number count-up highlight ===== */
+.stat-highlight {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.stat-highlight:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+
+/* ===== Gradient text glow ===== */
+.text-glow {
+  text-shadow: 0 0 20px rgba(167, 139, 250, 0.3);
+}
+
+/* ===== Enhanced table row hover ===== */
+.table-row-hover {
+  transition: all 0.15s ease;
+}
+.table-row-hover:hover {
+  background: linear-gradient(90deg, rgba(167,139,250,0.06) 0%, transparent 100%);
+  transform: translateX(2px);
+}
+
+/* ===== Status indicator dot with glow ===== */
+.status-dot-active {
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.5);
+}
+.status-dot-warning {
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.5);
+}
+
+/* ===== Card inner highlight bar ===== */
+.card-highlight-bar {
+  position: relative;
+  overflow: hidden;
+}
+.card-highlight-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(180deg, #A78BFA, #7E57C2, transparent);
+  border-radius: 3px 0 0 3px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.card-highlight-bar:hover::before {
+  opacity: 1;
+}
+
+/* ===== Enhanced pill tags with subtle shine ===== */
+.pill-shine {
+  position: relative;
+  overflow: hidden;
+}
+.pill-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.5s ease;
+}
+.pill-shine:hover::after {
+  left: 100%;
+}
+
+/* ===== Enhanced Recharts tooltip ===== */
+.recharts-tooltip-wrapper {
+  z-index: 9999 !important;
+}
+
+/* ===== Stat bar mini-chart gradient ===== */
+.stat-bar-glow {
+  box-shadow: 0 0 12px rgba(167, 139, 250, 0.15);
+}
+
+/* ===== Enhanced focus ring for all inputs ===== */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: rgba(167, 139, 250, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.12) !important;
+}
+
+/* ===== Glass morphism card variant ===== */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+}
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ===== Smooth page enter animation ===== */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: page-enter 0.35s ease-out;
+}
+
+/* ===== Enhanced scrollbar for dark mode modals ===== */
+.modal-panel ::-webkit-scrollbar {
+  width: 5px;
+}
+.modal-panel ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.modal-panel ::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+}
+.modal-panel ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* ===== Dashboard chart container glow ===== */
+.chart-glow {
+  position: relative;
+}
+.chart-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 40px rgba(167, 139, 250, 0.04);
+  pointer-events: none;
+}
+
+/* ===== Summary bar icon bounce ===== */
+@keyframes icon-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+.summary-icon:hover svg {
+  animation: icon-bounce 0.3s ease;
+}
+
+/* ===== Enhanced button press effect ===== */
+.btn-press:active {
+  transform: scale(0.96);
+}
+
+/* ===== Subtle grid pattern background ===== */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* ===== Empty state illustration ===== */
+.empty-state {
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+.empty-state:hover {
+  opacity: 0.7;
+}

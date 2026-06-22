@@ -166,21 +166,61 @@ export default function JobDetailModal({ open, jobId, onClose, onEdit, onDelete 
             </section>
           )}
 
-          {/* Job Link */}
-          {job.jobLink && (
+          {/* Job Link / Websites */}
+          {(job.jobLink || (job.websites && job.websites.length > 0)) && (
             <section>
-              <h3 className="text-xs font-semibold text-offer-muted uppercase tracking-wider mb-2">岗位链接</h3>
-              <a
-                href={job.jobLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-offer-accent break-all hover:underline inline-flex items-center gap-1"
-              >
-                {job.jobLink}
-                <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
+              <h3 className="text-xs font-semibold text-white/45 uppercase tracking-wider mb-3">🔗 求职跳转</h3>
+              <div className="space-y-2">
+                {/* New websites format */}
+                {(job.websites || []).filter(w => w.url).map((w, i) => (
+                  <a
+                    key={i}
+                    href={w.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between gap-3 rounded-xl bg-purple-500/[0.08] border border-purple-400/20 px-4 py-3 hover:bg-purple-500/[0.15] hover:border-purple-400/40 transition-all group"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
+                        <svg className="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-white truncate">{w.platform || '求职网站'}</p>
+                        <p className="text-xs text-gray-400 truncate">{w.url}</p>
+                      </div>
+                    </div>
+                    <span className="shrink-0 text-xs font-medium text-purple-300 group-hover:text-purple-200 transition-colors">
+                      去投递 →
+                    </span>
+                  </a>
+                ))}
+                {/* Legacy jobLink fallback */}
+                {job.jobLink && !(job.websites && job.websites.length > 0) && (
+                  <a
+                    href={job.jobLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between gap-3 rounded-xl bg-purple-500/[0.08] border border-purple-400/20 px-4 py-3 hover:bg-purple-500/[0.15] hover:border-purple-400/40 transition-all group"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
+                        <svg className="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-white">岗位链接</p>
+                        <p className="text-xs text-gray-400 truncate">{job.jobLink}</p>
+                      </div>
+                    </div>
+                    <span className="shrink-0 text-xs font-medium text-purple-300 group-hover:text-purple-200 transition-colors">
+                      去投递 →
+                    </span>
+                  </a>
+                )}
+              </div>
             </section>
           )}
 

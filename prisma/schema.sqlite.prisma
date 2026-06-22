@@ -35,6 +35,7 @@ model Job {
   appliedDate    String?
   jobLink        String?
   jdText         String?
+  websites       Json?
   resumeId       String?
   contactName    String?
   contactInfo    String?

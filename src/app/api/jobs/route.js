@@ -18,7 +18,7 @@ export async function POST(request) {
   if (!user) return NextResponse.json({ error: '未登录' }, { status: 401 })
 
   const body = await request.json()
-  const { companyName, jobTitle, status, city, salaryRange, workMode, channel, priority, appliedDate, jobLink, jdText, resumeId, contactName, contactInfo, nextAction, notes, endReason, interviewRounds, timeline } = body
+  const { companyName, jobTitle, status, city, salaryRange, workMode, channel, priority, appliedDate, jobLink, jdText, websites, resumeId, contactName, contactInfo, nextAction, notes, endReason, interviewRounds, timeline } = body
 
   const job = await prisma.job.create({
     data: {
@@ -34,6 +34,7 @@ export async function POST(request) {
       appliedDate: appliedDate || '',
       jobLink: jobLink || '',
       jdText: jdText || '',
+      websites: websites || [],
       resumeId: resumeId || null,
       contactName: contactName || '',
       contactInfo: contactInfo || '',

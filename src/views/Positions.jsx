@@ -199,11 +199,12 @@ export default function Positions() {
       addToast('没有可导出的数据', 'error')
       return
     }
-    const header = '公司,岗位,状态,城市,薪资范围,渠道,投递日期,优先级,联系人,下一步行动'
-    const rows = filteredJobs.map((j) =>
-      [j.companyName, j.jobTitle, j.status, j.city, j.salaryRange, j.channel, j.appliedDate, j.priority, j.contactName, j.nextAction]
+    const header = '公司,岗位,状态,城市,薪资范围,渠道,投递日期,优先级,联系人,下一步行动,求职链接'
+    const rows = filteredJobs.map((j) => {
+      const webLinks = (j.websites || []).map(w => `${w.platform}:${w.url}`).join('; ')
+      return [j.companyName, j.jobTitle, j.status, j.city, j.salaryRange, j.channel, j.appliedDate, j.priority, j.contactName, j.nextAction, webLinks]
         .map((v) => `"${(v || '').replace(/"/g, '""')}"`).join(',')
-    )
+    })
     const csv = '﻿' + header + '\n' + rows.join('\n')
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
@@ -219,11 +220,44 @@ export default function Positions() {
   const activeFilters = (statusFilter !== '全部' ? 1 : 0) + (channelFilter !== '全部' ? 1 : 0) +
     (cityFilter !== '全部' ? 1 : 0) + (priorityFilter !== '全部' ? 1 : 0)
 
+  // Summary stats
+  const summaryStats = useMemo(() => {
+    const active = jobs.filter((j) => !['已结束', 'Offer'].includes(j.status))
+    const interviewing = jobs.filter((j) => ['一面中', '二面中', '三面中', '终面中'].includes(j.status))
+    const offers = jobs.filter((j) => j.status === 'Offer')
+    const applied = jobs.filter((j) => j.appliedDate)
+    const withLinks = jobs.filter((j) => (j.websites && j.websites.length > 0) || j.jobLink)
+    return { active: active.length, interviewing: interviewing.length, offers: offers.length, applied: applied.length, withLinks: withLinks.length }
+  }, [jobs])
+
   return (
     <div className="px-6 py-6">
       <div className="mb-5">
         <h1 className="text-3xl font-bold tracking-tight text-white">岗位库</h1>
         <p className="text-sm text-gray-400 dark:text-white/45 mt-1">管理所有投递岗位，共 {jobs.length} 个记录</p>
+      </div>
+
+      {/* ===== Summary Stats Bar ===== */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-5">
+        {[
+          { label: '总岗位', value: jobs.length, icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10', color: 'text-violet-400', bg: 'bg-violet-500/10' },
+          { label: '进行中', value: summaryStats.active, icon: 'M13 10V3L4 14h7v7l9-11h-7z', color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
+          { label: '面试中', value: summaryStats.interviewing, icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z', color: 'text-amber-400', bg: 'bg-amber-500/10' },
+          { label: 'Offer', value: summaryStats.offers, icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
+          { label: '有链接', value: summaryStats.withLinks, icon: 'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1', color: 'text-purple-400', bg: 'bg-purple-500/10' },
+        ].map((s, i) => (
+          <div key={i} className="card-modern p-3 flex items-center gap-3 card-hover">
+            <div className={`w-9 h-9 rounded-lg ${s.bg} flex items-center justify-center shrink-0`}>
+              <svg className={`w-4 h-4 ${s.color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={s.icon} />
+              </svg>
+            </div>
+            <div className="min-w-0">
+              <p className="text-xs text-gray-400 dark:text-white/45 truncate">{s.label}</p>
+              <p className="text-lg font-bold text-white">{s.value}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* ===== Toolbar ===== */}
@@ -365,6 +399,7 @@ export default function Positions() {
                 <th className="px-4 py-3.5 text-left text-gray-400 dark:text-white/35 font-medium text-xs uppercase tracking-wider whitespace-nowrap">优先级</th>
                 <th className="px-4 py-3.5 text-left text-gray-400 dark:text-white/35 font-medium text-xs uppercase tracking-wider whitespace-nowrap">关联简历</th>
                 <th className="px-4 py-3.5 text-left text-gray-400 dark:text-white/35 font-medium text-xs uppercase tracking-wider whitespace-nowrap min-w-[120px]">下一步行动</th>
+                <th className="px-4 py-3.5 text-left text-gray-400 dark:text-white/35 font-medium text-xs uppercase tracking-wider whitespace-nowrap">求职链接</th>
                 <th className="px-4 py-3.5 text-left text-gray-400 dark:text-white/35 font-medium text-xs uppercase tracking-wider whitespace-nowrap w-20">操作</th>
               </tr>
             </thead>
@@ -424,6 +459,44 @@ export default function Positions() {
                       </td>
                       <td className="px-4 py-3 text-gray-300 dark:text-white/65 text-xs whitespace-nowrap">{getResumeName(j.resumeId)}</td>
                       <td className="px-4 py-3 text-gray-300 dark:text-white/65 text-xs max-w-[120px] truncate" title={j.nextAction}>{j.nextAction || '-'}</td>
+                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                        {(j.websites && j.websites.length > 0) ? (
+                          <div className="flex items-center gap-1 flex-wrap">
+                            {j.websites.filter(w => w.url).slice(0, 3).map((w, i) => (
+                              <a
+                                key={i}
+                                href={w.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 rounded-lg bg-purple-500/10 border border-purple-400/20 px-2 py-1 text-xs text-purple-300 hover:bg-purple-500/20 hover:text-purple-200 transition-all"
+                                title={w.platform ? `${w.platform}: ${w.url}` : w.url}
+                              >
+                                <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                                {w.platform || '跳转'}
+                              </a>
+                            ))}
+                            {j.websites.filter(w => w.url).length > 3 && (
+                              <span className="text-xs text-gray-500">+{j.websites.filter(w => w.url).length - 3}</span>
+                            )}
+                          </div>
+                        ) : j.jobLink ? (
+                          <a
+                            href={j.jobLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 rounded-lg bg-purple-500/10 border border-purple-400/20 px-2 py-1 text-xs text-purple-300 hover:bg-purple-500/20 hover:text-purple-200 transition-all"
+                          >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                            跳转
+                          </a>
+                        ) : (
+                          <span className="text-gray-500 dark:text-white/25 text-xs">-</span>
+                        )}
+                      </td>
                       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center gap-1">
                           <button
